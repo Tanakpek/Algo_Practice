@@ -1,0 +1,216 @@
+class Solution {
+  //------------*----------------------BFS---------------------*----------------------------
+
+    //lonely nodes
+    public List<Integer> getLonelyNodes(TreeNode root) {
+
+    }
+
+    // londgest palindromic substring
+
+    public String longestPalindrome(String s) {
+        int slength = s.length();
+        String ret = "";
+        if(slength == 0){
+            return s;
+        }
+        else if(slength == 1){
+            return s;
+        }
+        int maxlen = 0;
+
+        for(int i = 0; i < s.length(); i++){
+            int sym = checkPalindrome(i-1,i,slength, s , 0);
+            int asym = checkPalindrome(i-1,i+1,slength, s, 0);
+
+            if(sym > maxlen){
+                maxlen = sym;
+                ret = s.substring(i - sym, i + sym);
+            }
+
+            if(asym + 1 > maxlen){
+                maxlen = asym;
+                ret = s.substring(i-asym, i + asym + 1);
+            }
+
+        }
+        if(ret == ""){
+            return s.substring(0,1);
+
+        }
+        return ret;
+
+    }
+    public int checkPalindrome(int indx1, int indx2, int length, String s, int cur){
+        if (indx2 < length && indx1 >= 0){
+
+            if(s.charAt(indx1) == s.charAt(indx2)){
+                return checkPalindrome(indx1 -1, indx2 + 1, length, s, cur + 1);
+            }
+            else
+                return cur;
+        }
+        else {return cur;}
+
+    }
+
+    // symmetric tree
+
+    public boolean isSymmetric(TreeNode root) {
+        boolean sym = true;
+        if(root == null){
+            return true;
+        }
+        Stack<TreeNode> dfs1 = new Stack();
+        Stack<TreeNode> dfs2 = new Stack();
+        if(root.right == null && root.right != null){
+            return false;
+        }
+        else if(root.left == null && root.right != null){
+            return false;
+        }
+        else if(root.left == null && root.right == null){
+            return true;
+        }
+        else{
+            dfs1.push(root.left);
+            dfs2.push(root.right);
+            while(!(dfs1.isEmpty() || dfs2.isEmpty())){
+                TreeNode cur1 = dfs1.pop();
+                TreeNode cur2 = dfs2.pop();
+                if(cur1 != null && cur2 == null){
+                    return false;
+                }
+                if(cur1 == null && cur2 != null){
+                    return false;
+                }
+                if(cur1.val == cur2.val){
+                    //left side for left right side for right
+                    if(cur1.left == null){
+                        if(cur2.right != null){
+                            return false;
+                        }
+                        if(cur1.right != null && cur2.left != null){
+                            dfs1.push(cur1.right);
+                            dfs2.push(cur2.left);
+                        }
+                    }
+                    else{
+                        if(cur2.right == null){
+                            return false;
+                        }
+                        else{
+                            dfs1.push(cur1.left);
+                            dfs2.push(cur2.right);
+                        }
+                    }
+                    //right side for left left side for right
+                    if(cur1.right == null){
+                        if(cur2.left != null){
+                            return false;
+                        }
+                        if(cur1.left != null && cur2.right != null){
+                            dfs1.push(cur1.left);
+                            dfs2.push(cur2.right);
+                        }
+                    }
+                    else{
+                        if(cur2.left == null){
+                            return false;
+                        }
+                        else{
+                            dfs1.push(cur1.right);
+                            dfs2.push(cur2.left);
+                        }
+                    }
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // Path Sum
+
+    public boolean hasPathSum(TreeNode root, int targetSum) {
+        return TraverseAndMeasure(root, targetSum, 0);
+    }
+    public boolean TraverseAndMeasure(TreeNode node, int targetSum, int currentSum){
+        if(node != null){
+            if(node.left == null){
+                if(node.right == null){
+                    return targetSum == currentSum + node.val;
+                }
+                else{
+                    return TraverseAndMeasure(node.right, targetSum, currentSum + node.val);
+                }
+            }
+            else if(node.right == null){
+                return TraverseAndMeasure(node.left, targetSum, currentSum + node.val);
+            }
+            else{return TraverseAndMeasure(node.right, targetSum, currentSum + node.val) || TraverseAndMeasure(node.left, targetSum, currentSum + node.val);}
+        }
+        return false;
+    }
+
+    // -------------------------------*-----BFS-----*----------------------------------
+
+    // sum of left leaves
+    int sum = 0;
+    public int sumOfLeftLeaves(TreeNode root) {
+        LinkedList<TreeNode> q = new LinkedList();
+        if(root == null){
+            return sum;
+        }
+        else{
+            q.add(root);
+            while(!q.isEmpty()){
+                TreeNode cur = q.removeFirst();
+                if(cur.left != null){
+                    if(cur.left.left == null && cur.left.right == null){
+                        sum += cur.left.val;
+                    }
+                    q.add(cur.left);
+                }
+                if(cur.right != null){
+                    q.add(cur.right);
+                }
+            }
+        }
+        return sum;
+    }
+
+    // Island Perimeter
+
+    int per = 0;
+
+    public int islandPerimeter(int[][] grid) {
+        for(int i = 0; i < grid.length ; i ++ ){
+            for(int j = 0 ; j < grid[0].length ; j ++){
+                if(grid[i][j] == 0) continue;
+                int chunk = 0;
+                if(i - 1 >= 0){
+                    if(grid[i-1][j] == 0) chunk += 1;
+                }
+                else chunk += 1;
+                if(i+1 < grid.length){
+                    if(grid[i+1][j] == 0) chunk += 1;
+                }
+                else chunk += 1;
+                if(j+1 < grid[0].length){
+                    if(grid[i][j+1] == 0) chunk += 1;
+                }
+                else chunk += 1;
+                if(j-1 >= 0){
+                    if(grid[i][j-1] == 0) chunk += 1;
+                }
+                else chunk += 1;
+                per += chunk;
+            }
+        }
+        return per;
+    }
+
+}
