@@ -213,4 +213,25 @@ class Solution {
         return per;
     }
 
+
+    //----------------------------------*--------Dynamic Programming-----*-------------------------------------------------
+
+    public int countSquares(int[][] matrix) {
+        int len = matrix.length;
+        int height = matrix[0].length;
+        int total = 0;
+        for(int i = 0; i < len ; i++){
+            for(int j = 0;  j < height; j++){
+                int left = j == 0 ? 0 : matrix[i][j-1];
+                int top = i == 0 ? 0 : matrix[i-1][j];
+                int topleft = j == 0 || i == 0 ? 0 : matrix[i-1][j-1];
+                if(matrix[i][j] == 1){
+                    matrix[i][j] = 1 + Math.min(left, Math.min(top,topleft));
+                    total += matrix[i][j];
+                }
+            }
+        }
+        return total;
+    }
+
 }
